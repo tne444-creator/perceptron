@@ -116,6 +116,17 @@ class App(tk.Tk):
             background=[("active", "#99f6e4")],
             foreground=[("active", BG)],
         )
+        style.configure(
+            "Weight.TEntry",
+            fieldbackground=WHITE,
+            foreground="#000000",
+            insertcolor="#000000",
+        )
+        style.map(
+            "Weight.TEntry",
+            fieldbackground=[("disabled", WHITE), ("readonly", WHITE), ("focus", WHITE)],
+            foreground=[("disabled", "#000000"), ("focus", "#000000")],
+        )
 
     def _build_layout(self) -> None:
         header = ttk.Frame(self, style="TFrame")
@@ -342,7 +353,7 @@ class App(tk.Tk):
         row = ttk.Frame(parent, style="Card.TFrame")
         row.pack(fill="x", pady=2)
         ttk.Label(row, text=title, style="M.TLabel").pack(side="left")
-        entry = ttk.Entry(row, textvariable=var, width=8, justify="right")
+        entry = ttk.Entry(row, textvariable=var, width=8, justify="right", style="Weight.TEntry")
         entry.pack(side="right")
         entry.bind("<Return>", lambda _e, i=index: self._commit_weight(i))
         entry.bind("<FocusOut>", lambda _e, i=index: self._commit_weight(i))
@@ -589,7 +600,7 @@ class App(tk.Tk):
 
         for i, y_in in enumerate(in_ys):
             fill = self._mix("#1e3a4c", ACCENT_2, min(1.0, abs(x_vals[i])))
-            self._neuron(c, left_x, y_in, 16, fill, f"x{i + 1}", f"{x_vals[i]:.2f}")
+            self._neuron(c, left_x, y_in, 16, fill, f"x{i + 1}", f"{x_vals[i]:.2f}", outline="")
             c.create_text(left_x, y_in + 28, text=labels[i], fill=MUTED, font=("Segoe UI", 8))
             c.create_line(left_x + 18, y_in, attn_x, attn_y + cell * (i + 0.5), fill=STROKE, width=1)
 
@@ -693,8 +704,17 @@ class App(tk.Tk):
         fill: str,
         title: str,
         subtitle: str,
+        outline: str = WHITE,
     ) -> None:
-        canvas.create_oval(x - r, y - r, x + r, y + r, fill=fill, outline=WHITE, width=2)
+        canvas.create_oval(
+            x - r,
+            y - r,
+            x + r,
+            y + r,
+            fill=fill,
+            outline=outline or "",
+            width=2 if outline else 0,
+        )
         canvas.create_text(x, y - 4, text=title, fill=WHITE, font=("Segoe UI Semibold", 10))
         canvas.create_text(x, y + 12, text=subtitle, fill="#dbeafe", font=("Consolas", 8))
 
